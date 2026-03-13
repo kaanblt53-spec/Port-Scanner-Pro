@@ -3,7 +3,6 @@ import threading
 import os
 from datetime import datetime
 
-# Popüler portların ne işe yaradığını tanımlıyoruz
 PORT_BILGILERI = {
     21: "FTP (Dosya Aktarımı)",
     22: "SSH (Güvenli Bağlantı)",
@@ -31,7 +30,10 @@ def port_scanner(target_ip, port):
             servis_adi = PORT_BILGILERI.get(port, "Bilinmeyen Servis")
             try:
                 banner = s.recv(1024).decode().strip()
-                bilgi = f"[+] Port {port} AÇIK  --> Banner: {banner} ({servis_adi})"
+                if banner:
+                    bilgi = f"[+] Port {port} AÇIK  --> Banner: {banner} ({servis_adi})"
+                else:
+                    bilgi = f"[+] Port {port} AÇIK  --> Servis: {servis_adi} (Banner boş)"
             except:
                 bilgi = f"[+] Port {port} AÇIK  --> Servis: {servis_adi} (Banner alınamadı)"
             
@@ -50,7 +52,7 @@ print(f"Tarama başlatıldı: {target_ip}")
 print("-" * 50)
 
 threads = []
-for port in range(1, 1024): # 1024'e kadar olan popüler portları tarayalım
+for port in range(1, 1024):
     thread = threading.Thread(target=port_scanner, args=(target_ip, port))
     threads.append(thread)
     thread.start()
